@@ -17,8 +17,13 @@ import { api } from './api';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('kd_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('kd_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (err) {
+      console.warn('Failed to load user from localStorage:', err);
+      return null;
+    }
   });
 
   const [headerBg, setHeaderBg] = useState<string>(() => {
@@ -94,7 +99,52 @@ const App: React.FC = () => {
   const [showChatOverlay, setShowChatOverlay] = useState(false);
   const [globalActiveScene, setGlobalActiveScene] = useState<'LIVE' | 'STANDBY' | 'PROMO' | 'B1' | 'B2'>('STANDBY');
 
-  // Initial Fetch
+  // Visibility Hook Logic (Optimized Polling)
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleVisibility = () => setIsVisible(document.visibilityState === 'visible');
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  // Poll for Graphics Settings Sync (Only when visible)
+  useEffect(() => {
+    let intervalId: any;
+
+    const pollSettings = async () => {
+      if (!isVisible) return;
+      try {
+        const settings = await api.getSettings();
+        if (settings.broadcast_graphics) {
+          const g = JSON.parse(settings.broadcast_graphics);
+          setTickerText(g.tickerText);
+          setShowTicker(g.showTicker);
+          setTickerSpeed(g.tickerSpeed);
+          setLogoUrl(g.logoUrl);
+          setLogoPosition(g.logoPosition);
+          setGraphicTheme(g.graphicTheme);
+          setLowerThirdTitle(g.lowerThirdTitle);
+          setLowerThirdSubtitle(g.lowerThirdSubtitle);
+          setIsLowerThirdVisible(g.isLowerThirdVisible);
+          setShowChatOverlay(g.showChatOverlay);
+          setGlobalActiveScene(g.activeScene || 'STANDBY');
+          if (g.streamUrl) setStreamUrl(g.streamUrl);
+        }
+      } catch (err) {
+        console.warn('Poll skip/error:', err);
+      }
+    };
+
+    if (isVisible) {
+      pollSettings();
+      intervalId = setInterval(pollSettings, 4000); // Relaxed to 4s for better performance
+    }
+
+    return () => { if (intervalId) clearInterval(intervalId); };
+  }, [isVisible]);
+
+  // Initial Fetch with Offline Fallback
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -134,55 +184,19 @@ const App: React.FC = () => {
 
         setSales(orderList);
       } catch (err) {
-        console.error('Failed to fetch data:', err);
+        console.warn('API unavailable, using offline defaults:', err);
+        // Fallback to default data when API is unavailable (offline mode for Android APK)
+        const defaultProducts = [
+          ...DEFAULT_PIZZAS.map(p => ({ ...p, isActive: true, category: 'PIZZAS' })),
+          ...DEFAULT_DRINKS.map(d => ({ ...d, isActive: true, category: 'BEBIDAS' }))
+        ];
+        setProducts(defaultProducts);
+        setCategories(['PIZZAS', 'BEBIDAS']);
+        setZones(DEFAULT_ZONES);
+        setSales([]);
       }
     };
     fetchData();
-
-
-    // Visibility Hook Logic (Optimized Polling)
-    const [isVisible, setIsVisible] = useState(true);
-    useEffect(() => {
-      const handleVisibility = () => setIsVisible(document.visibilityState === 'visible');
-      document.addEventListener('visibilitychange', handleVisibility);
-      return () => document.removeEventListener('visibilitychange', handleVisibility);
-    }, []);
-
-    // Poll for Graphics Settings Sync (Only when visible)
-    useEffect(() => {
-      let intervalId: any;
-
-      const pollSettings = async () => {
-        if (!isVisible) return;
-        try {
-          const settings = await api.getSettings();
-          if (settings.broadcast_graphics) {
-            const g = JSON.parse(settings.broadcast_graphics);
-            setTickerText(g.tickerText);
-            setShowTicker(g.showTicker);
-            setTickerSpeed(g.tickerSpeed);
-            setLogoUrl(g.logoUrl);
-            setLogoPosition(g.logoPosition);
-            setGraphicTheme(g.graphicTheme);
-            setLowerThirdTitle(g.lowerThirdTitle);
-            setLowerThirdSubtitle(g.lowerThirdSubtitle);
-            setIsLowerThirdVisible(g.isLowerThirdVisible);
-            setShowChatOverlay(g.showChatOverlay);
-            setGlobalActiveScene(g.activeScene || 'STANDBY');
-            if (g.streamUrl) setStreamUrl(g.streamUrl);
-          }
-        } catch (err) {
-          console.warn('Poll skip/error:', err);
-        }
-      };
-
-      if (isVisible) {
-        pollSettings();
-        intervalId = setInterval(pollSettings, 4000); // Relaxed to 4s for better performance
-      }
-
-      return () => { if (intervalId) clearInterval(intervalId); };
-    }, [isVisible]);
   }, []);
 
   useEffect(() => {
