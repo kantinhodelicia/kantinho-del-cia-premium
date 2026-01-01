@@ -35,9 +35,13 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Make Gradlew Executable
+      - name: Fix Gradlew Permissions & Line Endings
         working-directory: ./android
-        run: chmod +x gradlew
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
+          dos2unix gradlew
+          chmod +x gradlew
 
       - name: Build APK
         working-directory: ./android
