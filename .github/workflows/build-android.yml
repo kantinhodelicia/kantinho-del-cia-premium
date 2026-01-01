@@ -35,17 +35,19 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Fix Gradlew Permissions & Line Endings
+      - name: Debug and Build APK
         working-directory: ./android
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dos2unix
-          dos2unix gradlew
+          echo "Current Directory: $(pwd)"
+          ls -la
+          echo "Checking Gradlew..."
+          ls -la gradlew
+          
+          echo "Fixing Permissions..."
           chmod +x gradlew
-
-      - name: Build APK
-        working-directory: ./android
-        run: ./gradlew assembleDebug
+          
+          echo "Running Build..."
+          ./gradlew assembleDebug --stacktrace --info
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
