@@ -128,7 +128,7 @@ const MenuList: React.FC<Props> = ({ products, selectedSize, onSelect, halfMode,
             placeholder="O que você deseja saborear hoje?"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-900/30 border border-white/5 rounded-[32px] py-6 pl-16 pr-8 text-white text-lg font-bold focus:outline-none focus:border-red-600/30 transition-all placeholder:text-slate-700 backdrop-blur-xl shadow-2xl"
+            className="w-full bg-slate-900/40 border border-white/10 rounded-[28px] py-5 md:py-6 pl-14 md:pl-16 pr-8 text-white text-base md:text-lg font-bold focus:outline-none focus:border-red-600/50 transition-all placeholder:text-slate-600 backdrop-blur-3xl shadow-2xl"
           />
           {searchTerm && (
             <button
@@ -221,12 +221,12 @@ const MenuList: React.FC<Props> = ({ products, selectedSize, onSelect, halfMode,
             const isLeft = halfMode && halfSelection?.left?.id === p.id;
             const isRight = halfMode && halfSelection?.right?.id === p.id;
 
-            let cardClasses = "group relative p-8 rounded-[48px] border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ";
+            let cardClasses = "group relative p-6 md:p-8 rounded-[40px] md:rounded-[48px] border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ";
 
             if (!isAvailable) {
               cardClasses += "bg-slate-900/10 border-white/5 opacity-40 cursor-not-allowed grayscale";
             } else {
-              cardClasses += "bg-slate-900/40 border-white/5 cursor-pointer backdrop-blur-md ";
+              cardClasses += "bg-slate-900/40 border-white/10 cursor-pointer backdrop-blur-md ";
 
               if (isPressed) {
                 cardClasses += "scale-95 brightness-150 border-red-500/50 ";
@@ -306,7 +306,7 @@ const MenuList: React.FC<Props> = ({ products, selectedSize, onSelect, halfMode,
 
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex-1 pr-4">
-                    <h3 className={`text-2xl font-black mb-2 transition-colors duration-500 tracking-tighter uppercase italic ${isLeft ? 'text-green-400' : isRight ? 'text-blue-400' : 'text-white group-hover:text-red-500'
+                    <h3 className={`text-xl md:text-2xl font-black mb-1 md:mb-2 transition-colors duration-500 tracking-tight uppercase ${isLeft ? 'text-green-400' : isRight ? 'text-blue-400' : 'text-white group-hover:text-red-500'
                       }`}>
                       {p.name}
                     </h3>

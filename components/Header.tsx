@@ -15,9 +15,9 @@ interface Props {
 
 const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, onOpenLive, backgroundUrl, hasLive }) => {
   return (
-    <header className="relative py-16 px-4 overflow-hidden min-h-[400px] flex items-center justify-center">
+    <header className="relative py-12 md:py-20 px-4 overflow-hidden min-h-[350px] md:min-h-[450px] flex items-center justify-center">
       {/* Dynamic Background Layer */}
-      <div 
+      <div
         className="absolute inset-0 z-[-2] transition-all duration-1000 ease-in-out scale-105"
         style={{
           backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
@@ -25,19 +25,19 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
           backgroundPosition: 'center',
         }}
       />
-      
+
       {/* Premium Overlays */}
       <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] z-[-1]"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/40 to-slate-950 z-[-1]"></div>
-      
+
       {/* Decorative Glow */}
       {!backgroundUrl && (
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[100px] -z-10 rounded-full animate-pulse"></div>
       )}
-      
+
       <div className="max-w-4xl mx-auto flex flex-col items-center relative">
         {hasLive && (
-          <button 
+          <button
             onClick={onOpenLive}
             className="mb-8 flex items-center gap-3 bg-red-600/20 backdrop-blur-md border border-red-500/30 px-5 py-2.5 rounded-2xl animate-bounce hover:scale-105 transition-all"
           >
@@ -50,7 +50,7 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
         )}
 
         <div className="mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-           <h1 className="text-6xl md:text-8xl font-bold font-crimson tracking-tight text-white mb-2 text-center drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold font-crimson tracking-tight text-white mb-2 text-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
             KANTINHO <span className="text-red-600">DELÍCIA</span>
           </h1>
           <div className="flex items-center justify-center gap-4">
@@ -59,9 +59,9 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
             <div className="h-px w-8 bg-red-600/50"></div>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4 bg-slate-900/60 backdrop-blur-xl border border-white/10 px-6 py-2 rounded-full shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <button 
+          <button
             onClick={onOpenProfile}
             className="flex items-center gap-2 group"
           >
@@ -78,12 +78,12 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
               <span className="text-[9px] font-black text-yellow-500 uppercase tracking-tighter">{user.points} Pontos</span>
             </div>
           </button>
-          
+
           <div className="w-px h-6 bg-white/10"></div>
 
           {user.isAdmin && (
             <>
-              <button 
+              <button
                 onClick={onOpenAdmin}
                 className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-all flex items-center justify-center"
                 title="Painel Admin"
@@ -93,8 +93,8 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
               <div className="w-px h-6 bg-white/10"></div>
             </>
           )}
-          
-          <button 
+
+          <button
             onClick={onLogout}
             className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all"
             title="Sair"

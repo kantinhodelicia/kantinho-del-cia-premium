@@ -387,7 +387,7 @@ const App: React.FC = () => {
   const sizes: PizzaSize[] = ['FAMILIAR', 'MEDIO', 'PEQ'];
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-24">
+    <div className="min-h-screen bg-[#020617] bg-gradient-to-b from-slate-950 via-slate-950 to-black pb-32 pt-[env(safe-area-inset-top)]">
       <Header
         user={user}
         onLogout={() => setUser(null)}
