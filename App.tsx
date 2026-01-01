@@ -14,6 +14,7 @@ import LiveModal from './components/LiveModal';
 import AdBanner from './components/AdBanner';
 import { ShoppingBag, Gamepad2, Sparkles, Award, Lock, ShieldAlert, X, Tv, Download } from 'lucide-react';
 import { api } from './api';
+import { AdMob } from '@capacitor-community/admob';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(() => {
@@ -98,6 +99,10 @@ const App: React.FC = () => {
   const [isLowerThirdVisible, setIsLowerThirdVisible] = useState(false);
   const [showChatOverlay, setShowChatOverlay] = useState(false);
   const [globalActiveScene, setGlobalActiveScene] = useState<'LIVE' | 'STANDBY' | 'PROMO' | 'B1' | 'B2'>('STANDBY');
+
+  useEffect(() => {
+    AdMob.initialize().catch(err => console.warn('AdMob init failed:', err));
+  }, []);
 
   // Visibility Hook Logic (Optimized Polling)
   const [isVisible, setIsVisible] = useState(true);
