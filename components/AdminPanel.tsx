@@ -150,6 +150,7 @@ const AdminPanel: React.FC<Props> = ({
   });
   const [selectedExternalSource, setSelectedExternalSource] = useState<'b1' | 'b2'>('b1');
   const [signalHealth, setSignalHealth] = useState({ b1: 100, b2: 0 });
+  const [studioSubTab, setStudioSubTab] = useState<'SWITCHER' | 'GRAPHICS' | 'MIXER'>('SWITCHER');
   const [chatMessages, setChatMessages] = useState<{ id: string, user: string, text: string }[]>([
     { id: '1', user: 'Marcos P.', text: 'Essa pizza de calabresa é a melhor da cidade! 🔥' },
     { id: '2', user: 'Ana Julia', text: 'Quando sai a próxima fornada?' }
@@ -1059,12 +1060,18 @@ const AdminPanel: React.FC<Props> = ({
 
         {activeView === 'CONFIGS' && (
           <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in pb-20">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div>
-                <h2 className="text-4xl font-black uppercase tracking-tighter flex items-center gap-4">
-                  Broadcast Studio <span className="text-xs bg-red-600 px-3 py-1 rounded-full tracking-[0.3em] ml-2">V5 PRO</span>
-                </h2>
-                <div className="flex items-center gap-3 mt-2">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-8 mb-8">
+              <div className="w-full md:w-auto">
+                <div className="flex items-center justify-between md:block">
+                  <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter flex items-center gap-4">
+                    Studio <span className="text-xs bg-red-600 px-3 py-1 rounded-full tracking-[0.3em]">V5 PRO</span>
+                  </h2>
+                  <div className="md:hidden flex items-center gap-2 bg-red-600/10 border border-red-600/20 px-3 py-1 rounded-full">
+                    <div className={`w-1.5 h-1.5 bg-red-600 rounded-full ${isRecording ? 'animate-pulse' : ''}`}></div>
+                    <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">{isRecording ? 'LIVE' : 'IDLE'}</span>
+                  </div>
+                </div>
+                <div className="hidden md:flex items-center gap-3 mt-2">
                   <div className={`flex items-center gap-2 bg-red-600/10 border border-red-600/20 px-3 py-1 rounded-full ${isRecording ? 'opacity-100' : 'opacity-50'}`}>
                     <div className={`w-1.5 h-1.5 bg-red-600 rounded-full ${isRecording ? 'animate-pulse' : ''}`}></div>
                     <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">{isRecording ? 'REC 🔴 ' + formatTime(recordingTime) : 'STANDBY'}</span>
@@ -1073,7 +1080,20 @@ const AdminPanel: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 w-full md:w-auto">
+              {/* Mobile Sub-Tabs Navigation */}
+              <div className="flex md:hidden w-full bg-gray-950 p-1.5 rounded-2xl border border-white/5">
+                {(['SWITCHER', 'GRAPHICS', 'MIXER'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setStudioSubTab(tab)}
+                    className={`flex-1 py-3.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${studioSubTab === tab ? 'bg-red-600 text-white shadow-lg' : 'text-gray-500'}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              <div className="hidden md:flex items-center gap-4 w-full md:w-auto">
                 <button
                   onClick={() => setIsRecording(!isRecording)}
                   className={`flex-1 md:flex-none px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${isRecording ? 'bg-red-600 text-white shadow-lg shadow-red-900/40' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
@@ -1085,8 +1105,8 @@ const AdminPanel: React.FC<Props> = ({
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* LEFT COLUMN: VISUALS */}
-              <div className="lg:col-span-8 space-y-8">
+              {/* LEFT COLUMN: VISUALS (Switcher View) */}
+              <div className={`lg:col-span-8 space-y-8 ${studioSubTab !== 'SWITCHER' && 'hidden md:block'}`}>
                 {/* DUAL MONITOR WALL */}
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-3">
@@ -1314,198 +1334,204 @@ const AdminPanel: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* RIGHT COLUMN: CONTROLS */}
+              {/* RIGHT COLUMN: CONTROLS (Graphics & Mixer) */}
               <div className="lg:col-span-4 space-y-8">
-                {/* PRO AUDIO MIXER */}
-                <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                      <Volume2 className="w-4 h-4" /> Audio Mixer
-                    </h4>
-                    <span className="text-[10px] font-black text-blue-500 uppercase">Master 0.0dB</span>
-                  </div>
-                  <div className="flex justify-between gap-4 h-56 bg-black/20 rounded-[32px] p-6 border border-white/5">
-                    {Object.entries(audioMixer).map(([key, val]) => (
-                      <div key={key} className="flex flex-col items-center gap-4 flex-1">
-                        <div className="flex-1 w-2 bg-gray-800 rounded-full relative flex flex-col justify-end">
-                          <div className={`absolute inset-x-[-4px] w-4 h-1 rounded-full ${key === 'mic' ? 'bg-red-500' : 'bg-blue-500'}`} style={{ bottom: `${val}%` }}></div>
-                          <div className={`w-full ${key === 'mic' ? 'bg-red-600' : 'bg-blue-600'} rounded-full transition-all duration-300`} style={{ height: `${val}%` }}></div>
+                {/* Audio Mixer Tab */}
+                <div className={`${studioSubTab !== 'MIXER' && 'hidden md:block'} space-y-8`}>
+                  {/* PRO AUDIO MIXER */}
+                  <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-6">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                        <Volume2 className="w-4 h-4" /> Audio Mixer
+                      </h4>
+                      <span className="text-[10px] font-black text-blue-500 uppercase">Master 0.0dB</span>
+                    </div>
+                    <div className="flex justify-between gap-4 h-56 bg-black/20 rounded-[32px] p-6 border border-white/5">
+                      {Object.entries(audioMixer).map(([key, val]) => (
+                        <div key={key} className="flex flex-col items-center gap-4 flex-1">
+                          <div className="flex-1 w-2 bg-gray-800 rounded-full relative flex flex-col justify-end">
+                            <div className={`absolute inset-x-[-4px] w-4 h-1 rounded-full ${key === 'mic' ? 'bg-red-500' : 'bg-blue-500'}`} style={{ bottom: `${val}%` }}></div>
+                            <div className={`w-full ${key === 'mic' ? 'bg-red-600' : 'bg-blue-600'} rounded-full transition-all duration-300`} style={{ height: `${val}%` }}></div>
+                          </div>
+                          <p className="text-[8px] font-black uppercase text-gray-600 rotate-[-45deg]">{key}</p>
                         </div>
-                        <p className="text-[8px] font-black uppercase text-gray-600 rotate-[-45deg]">{key}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-1 h-2 bg-gray-900 rounded-full p-0.5 border border-white/5">
-                    {Array.from({ length: 20 }).map((_, i) => (
-                      <div key={i} className={`flex-1 rounded-sm ${i < (vuLevel / 5) ? (i > 15 ? 'bg-red-500' : i > 12 ? 'bg-yellow-500' : 'bg-emerald-500') : 'bg-white/5'}`}></div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* GRAPHICS ENGINE V2 UPDATER */}
-                <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-8">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                      <Palette className="w-4 h-4" /> Graphics Controller V2
-                    </h4>
-                  </div>
-
-                  {/* PRESETS SHORTCUTS */}
-                  <div className="space-y-3">
-                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest flex items-center gap-2"><Zap className="w-3 h-3 text-yellow-500" /> MCR Quick Presets</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { label: 'PROMOÇÃO AGORA', color: 'blue', title: '🔥 PROMOÇÃO RELÂMPAGO!', sub: 'Peça agora e ganhe 10% de desconto' },
-                        { label: 'FORNADA QUENTE', color: 'orange', title: '🍕 FORNADA SAINDO AGORA!', sub: 'Aromas irresistíveis direto para você' },
-                        { label: 'TAXA ZERO', color: 'emerald', title: '🚚 ENTREGA GRÁTIS!', sub: 'Válido para pedidos acima de 20$' },
-                        { label: 'DOUBLÉ PIZZA', color: 'purple', title: '🍕🍕 PIZZA EM DOBRO!', sub: 'Na compra de 1 Mega, leve a 2ª grátis' }
-                      ].map(p => (
-                        <button
-                          key={p.label}
-                          onClick={() => {
-                            onSaveGraphics({ lowerThirdTitle: p.title, lowerThirdSubtitle: p.sub });
-                            showAdminToast(`Preset: ${p.label}`, 'info');
-                          }}
-                          className={`py-3 bg-gray-800/50 hover:bg-${p.color}-600/20 border border-white/5 hover:border-${p.color}-500/50 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all`}
-                        >
-                          {p.label}
-                        </button>
+                      ))}
+                    </div>
+                    <div className="flex gap-1 h-2 bg-gray-900 rounded-full p-0.5 border border-white/5">
+                      {Array.from({ length: 20 }).map((_, i) => (
+                        <div key={i} className={`flex-1 rounded-sm ${i < (vuLevel / 5) ? (i > 15 ? 'bg-red-500' : i > 12 ? 'bg-yellow-500' : 'bg-emerald-500') : 'bg-white/5'}`}></div>
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  <div className="space-y-6">
-                    {/* THEME & POSITION */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Theme Style</p>
-                        <select
-                          value={graphics.graphicTheme}
-                          onChange={(e) => onSaveGraphics({ graphicTheme: e.target.value as any })}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] font-black uppercase outline-none focus:border-blue-500"
-                        >
-                          <option value="MODERN">Modern Red</option>
-                          <option value="GLASS">Crystal Glass</option>
-                          <option value="VIBRANT">Vibrant Blue</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Logo Position</p>
-                        <select
-                          value={graphics.logoPosition}
-                          onChange={(e) => onSaveGraphics({ logoPosition: e.target.value as any })}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] font-black uppercase outline-none focus:border-blue-500"
-                        >
-                          <option value="TOP_RIGHT">Top Right</option>
-                          <option value="TOP_LEFT">Top Left</option>
-                          <option value="BOTTOM_RIGHT">Bottom Right</option>
-                          <option value="BOTTOM_LEFT">Bottom Left</option>
-                        </select>
+                {/* Graphics Tab Content */}
+                <div className={`${studioSubTab !== 'GRAPHICS' && 'hidden md:block'} space-y-8`}>
+                  {/* GRAPHICS ENGINE V2 UPDATER */}
+                  <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-8">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                        <Palette className="w-4 h-4" /> Graphics Controller V2
+                      </h4>
+                    </div>
+
+                    {/* PRESETS SHORTCUTS */}
+                    <div className="space-y-3">
+                      <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest flex items-center gap-2"><Zap className="w-3 h-3 text-yellow-500" /> MCR Quick Presets</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { label: 'PROMOÇÃO AGORA', color: 'blue', title: '🔥 PROMOÇÃO RELÂMPAGO!', sub: 'Peça agora e ganhe 10% de desconto' },
+                          { label: 'FORNADA QUENTE', color: 'orange', title: '🍕 FORNADA SAINDO AGORA!', sub: 'Aromas irresistíveis direto para você' },
+                          { label: 'TAXA ZERO', color: 'emerald', title: '🚚 ENTREGA GRÁTIS!', sub: 'Válido para pedidos acima de 20$' },
+                          { label: 'DOUBLÉ PIZZA', color: 'purple', title: '🍕🍕 PIZZA EM DOBRO!', sub: 'Na compra de 1 Mega, leve a 2ª grátis' }
+                        ].map(p => (
+                          <button
+                            key={p.label}
+                            onClick={() => {
+                              onSaveGraphics({ lowerThirdTitle: p.title, lowerThirdSubtitle: p.sub });
+                              showAdminToast(`Preset: ${p.label}`, 'info');
+                            }}
+                            className={`py-3 bg-gray-800/50 hover:bg-${p.color}-600/20 border border-white/5 hover:border-${p.color}-500/50 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
-                    {/* CUSTOM LOGO URL */}
-                    <div className="space-y-2">
-                      <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Custom Logo URL (PNG/SVG)</p>
-                      <input
-                        type="text"
-                        value={logoUrl}
-                        onChange={(e) => setLogoUrl(e.target.value)}
-                        onBlur={() => saveG({ logoUrl })}
-                        placeholder="https://sua-logo.png"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
-                      />
-                    </div>
-
-                    {/* TICKER CONTROLS */}
-                    <div className="bg-black/20 p-6 rounded-[32px] border border-white/5 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2"><List className="w-3 h-3" /> News Ticker</p>
-                        <button onClick={() => onSaveGraphics({ showTicker: !graphics.showTicker })} className={`w-10 h-5 rounded-full relative transition-all ${graphics.showTicker ? 'bg-emerald-500' : 'bg-gray-800'}`}>
-                          <div className={`absolute top-1 size-3 rounded-full bg-white transition-all ${graphics.showTicker ? 'left-6' : 'left-1'}`}></div>
-                        </button>
-                      </div>
-                      <textarea
-                        value={tickerText}
-                        onChange={(e) => setTickerText(e.target.value)}
-                        onBlur={() => saveG({ tickerText })}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-[11px] font-semibold text-white outline-none focus:border-emerald-500 h-20 resize-none"
-                        placeholder="Digite o texto do letreiro aqui..."
-                      />
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-[8px] font-black text-gray-600 uppercase">
-                          <span>Velocidade</span>
-                          <span>{graphics.tickerSpeed}%</span>
-                        </div>
-                        <input
-                          type="range" min="10" max="90" value={graphics.tickerSpeed}
-                          onChange={(e) => onSaveGraphics({ tickerSpeed: Number(e.target.value) })}
-                          onMouseUp={(e) => onSaveGraphics({ tickerSpeed: Number(e.currentTarget.value) })}
-                          className="w-full accent-emerald-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4 pt-4 border-t border-white/5">
-                      <div className="space-y-2">
-                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">G.C. Headline</p>
-                        <input
-                          type="text"
-                          value={lowerThirdTitle}
-                          onChange={(e) => setLowerThirdTitle(e.target.value)}
-                          onBlur={() => saveG({ lowerThirdTitle })}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">G.C. Subtitle</p>
-                        <input
-                          type="text"
-                          value={lowerThirdSubtitle}
-                          onChange={(e) => setLowerThirdSubtitle(e.target.value)}
-                          onBlur={() => saveG({ lowerThirdSubtitle })}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
-                        />
-                      </div>
+                    <div className="space-y-6">
+                      {/* THEME & POSITION */}
                       <div className="grid grid-cols-2 gap-4">
-                        <button
-                          onClick={() => {
-                            setIsLowerThirdVisible(!isLowerThirdVisible);
-                            saveG({ isLowerThirdVisible: !isLowerThirdVisible });
-                          }}
-                          className={`py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${isLowerThirdVisible ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/40' : 'bg-gray-800 text-gray-400'}`}
-                        >
-                          {isLowerThirdVisible ? 'Hide G.C.' : 'Show G.C.'}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setShowChatOverlay(!showChatOverlay);
-                            saveG({ showChatOverlay: !showChatOverlay });
-                          }}
-                          className={`py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showChatOverlay ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40' : 'bg-gray-800 text-gray-400'}`}
-                        >
-                          Chat Overlay
-                        </button>
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Theme Style</p>
+                          <select
+                            value={graphics.graphicTheme}
+                            onChange={(e) => onSaveGraphics({ graphicTheme: e.target.value as any })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] font-black uppercase outline-none focus:border-blue-500"
+                          >
+                            <option value="MODERN">Modern Red</option>
+                            <option value="GLASS">Crystal Glass</option>
+                            <option value="VIBRANT">Vibrant Blue</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Logo Position</p>
+                          <select
+                            value={graphics.logoPosition}
+                            onChange={(e) => onSaveGraphics({ logoPosition: e.target.value as any })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] font-black uppercase outline-none focus:border-blue-500"
+                          >
+                            <option value="TOP_RIGHT">Top Right</option>
+                            <option value="TOP_LEFT">Top Left</option>
+                            <option value="BOTTOM_RIGHT">Bottom Right</option>
+                            <option value="BOTTOM_LEFT">Bottom Left</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* CUSTOM LOGO URL */}
+                      <div className="space-y-2">
+                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Custom Logo URL (PNG/SVG)</p>
+                        <input
+                          type="text"
+                          value={logoUrl}
+                          onChange={(e) => setLogoUrl(e.target.value)}
+                          onBlur={() => saveG({ logoUrl })}
+                          placeholder="https://sua-logo.png"
+                          className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
+                        />
+                      </div>
+
+                      {/* TICKER CONTROLS */}
+                      <div className="bg-black/20 p-6 rounded-[32px] border border-white/5 space-y-4">
+                        <div className="flex justify-between items-center">
+                          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2"><List className="w-3 h-3" /> News Ticker</p>
+                          <button onClick={() => onSaveGraphics({ showTicker: !graphics.showTicker })} className={`w-10 h-5 rounded-full relative transition-all ${graphics.showTicker ? 'bg-emerald-500' : 'bg-gray-800'}`}>
+                            <div className={`absolute top-1 size-3 rounded-full bg-white transition-all ${graphics.showTicker ? 'left-6' : 'left-1'}`}></div>
+                          </button>
+                        </div>
+                        <textarea
+                          value={tickerText}
+                          onChange={(e) => setTickerText(e.target.value)}
+                          onBlur={() => saveG({ tickerText })}
+                          className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-[11px] font-semibold text-white outline-none focus:border-emerald-500 h-20 resize-none"
+                          placeholder="Digite o texto do letreiro aqui..."
+                        />
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-[8px] font-black text-gray-600 uppercase">
+                            <span>Velocidade</span>
+                            <span>{graphics.tickerSpeed}%</span>
+                          </div>
+                          <input
+                            type="range" min="10" max="90" value={graphics.tickerSpeed}
+                            onChange={(e) => onSaveGraphics({ tickerSpeed: Number(e.target.value) })}
+                            onMouseUp={(e) => onSaveGraphics({ tickerSpeed: Number(e.currentTarget.value) })}
+                            className="w-full accent-emerald-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-white/5">
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">G.C. Headline</p>
+                          <input
+                            type="text"
+                            value={lowerThirdTitle}
+                            onChange={(e) => setLowerThirdTitle(e.target.value)}
+                            onBlur={() => saveG({ lowerThirdTitle })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">G.C. Subtitle</p>
+                          <input
+                            type="text"
+                            value={lowerThirdSubtitle}
+                            onChange={(e) => setLowerThirdSubtitle(e.target.value)}
+                            onBlur={() => saveG({ lowerThirdSubtitle })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-red-600"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            onClick={() => {
+                              setIsLowerThirdVisible(!isLowerThirdVisible);
+                              saveG({ isLowerThirdVisible: !isLowerThirdVisible });
+                            }}
+                            className={`py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${isLowerThirdVisible ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/40' : 'bg-gray-800 text-gray-400'}`}
+                          >
+                            {isLowerThirdVisible ? 'Hide G.C.' : 'Show G.C.'}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowChatOverlay(!showChatOverlay);
+                              saveG({ showChatOverlay: !showChatOverlay });
+                            }}
+                            className={`py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showChatOverlay ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40' : 'bg-gray-800 text-gray-400'}`}
+                          >
+                            Chat Overlay
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* TECHNICAL ANALYTICS */}
-                <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-6">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                    <Activity className="w-4 h-4" /> Telemetry Stream
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
-                      <p className="text-[8px] font-black text-gray-600 uppercase">Bitrate</p>
-                      <p className="text-lg font-black text-blue-500">{telemetry.bitrate}k</p>
-                      {renderTelemetryChart('bitrate')}
-                    </div>
-                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
-                      <p className="text-[8px] font-black text-gray-600 uppercase">Frame Rate</p>
-                      <p className="text-lg font-black text-emerald-500">{telemetry.fps}fps</p>
-                      {renderTelemetryChart('fps')}
+                  {/* TECHNICAL ANALYTICS */}
+                  <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-6">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                      <Activity className="w-4 h-4" /> Telemetry Stream
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p className="text-[8px] font-black text-gray-600 uppercase">Bitrate</p>
+                        <p className="text-lg font-black text-blue-500">{telemetry.bitrate}k</p>
+                        {renderTelemetryChart('bitrate')}
+                      </div>
+                      <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p className="text-[8px] font-black text-gray-600 uppercase">Frame Rate</p>
+                        <p className="text-lg font-black text-emerald-500">{telemetry.fps}fps</p>
+                        {renderTelemetryChart('fps')}
+                      </div>
                     </div>
                   </div>
                 </div>
