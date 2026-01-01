@@ -202,18 +202,7 @@
       animation: flyToCart 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
   </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
-  }
-}
-</script>
-  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="./index.css">
 </head>
 
 <body class="bg-slate-950 text-slate-50 overflow-x-hidden">
@@ -223,26 +212,12 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        try {
-          // Criar uma URL absoluta baseada na localização atual para garantir que o SW seja registrado na origem correta
-          // Isso resolve o erro de origin mismatch em ambientes de sandbox/proxy
-          const swUrl = new URL('sw.js', window.location.href).href;
-          navigator.serviceWorker.register(swUrl)
-            .then(reg => {
-              console.log('Service Worker registrado com sucesso na scope:', reg.scope);
-            })
-            .catch(err => {
-              // Em ambientes de preview/cloud IDE, o SW pode falhar por restrições de iframe ou SSL parcial
-              console.warn('Registro de Service Worker ignorado ou falhou (comum em previews):', err.message);
-            });
-        } catch (e) {
-          console.warn('Erro ao preparar registro do Service Worker:', e);
-        }
-      });
+      // Simplificado para evitar erros de URL relativa em file://
+      navigator.serviceWorker.register('./sw.js')
+        .catch(err => console.log('SW Registration failed (expected on file://):', err));
     }
   </script>
-  <script type="module" src="/index.tsx"></script>
+  <script type="module" src="./index.tsx"></script>
 </body>
 
 </html>

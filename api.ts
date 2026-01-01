@@ -1,6 +1,7 @@
 import { Product, Category, DeliveryZone, User, SaleRecord, AppSettings } from './types';
 
-const API_URL = '/api';
+// Absolute URL required for Android APK (file:// origin)
+const API_URL = 'https://painel.djuntemon.com/api';
 
 export const api = {
     // Categories
