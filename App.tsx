@@ -103,16 +103,21 @@ const App: React.FC = () => {
   const [globalActiveScene, setGlobalActiveScene] = useState<'LIVE' | 'STANDBY' | 'PROMO' | 'B1' | 'B2'>('STANDBY');
 
   useEffect(() => {
-    AdMob.initialize().catch(err => console.warn('AdMob init failed:', err));
-
-    // Pre-load interstitial ad
-    if (Capacitor.isNativePlatform()) {
-      const options: AdOptions = {
-        adId: ADMOB_CONFIG.interstitial_id,
-        isTesting: false
-      };
-      AdMob.prepareInterstitial(options).catch(err => console.warn('AdMob prepare failed:', err));
-    }
+    const initAdMob = async () => {
+      try {
+        await AdMob.initialize();
+        if (Capacitor.isNativePlatform()) {
+          const options: AdOptions = {
+            adId: ADMOB_CONFIG.interstitial_id,
+            isTesting: false
+          };
+          await AdMob.prepareInterstitial(options);
+        }
+      } catch (err) {
+        console.warn('AdMob startup failure (non-critical):', err);
+      }
+    };
+    initAdMob();
   }, []);
 
   // Visibility Hook Logic (Optimized Polling)
