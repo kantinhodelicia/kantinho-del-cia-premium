@@ -3,18 +3,19 @@ import React, { useEffect } from 'react';
 import { Share2 } from 'lucide-react';
 import { AdMob, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
+import { ADMOB_CONFIG } from '../constants';
 
 const AdBanner: React.FC = () => {
     useEffect(() => {
-        if (Capacitor.getPlatform() === 'android') {
+        if (Capacitor.isNativePlatform()) {
             const showBanner = async () => {
                 try {
                     await AdMob.showBanner({
-                        adId: 'ca-app-pub-3940256099942544/6300978111', // Test Banner ID
+                        adId: ADMOB_CONFIG.banner_id,
                         adSize: BannerAdSize.ADAPTIVE_BANNER,
                         position: BannerAdPosition.BOTTOM_CENTER,
                         margin: 90,
-                        isTesting: true
+                        isTesting: false
                     });
                 } catch (err) {
                     console.error('Banner error:', err);

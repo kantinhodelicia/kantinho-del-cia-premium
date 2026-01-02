@@ -14,7 +14,9 @@ import LiveModal from './components/LiveModal';
 import AdBanner from './components/AdBanner';
 import { ShoppingBag, Gamepad2, Sparkles, Award, Lock, ShieldAlert, X, Tv, Download } from 'lucide-react';
 import { api } from './api';
-import { AdMob } from '@capacitor-community/admob';
+import { AdMob, AdOptions } from '@capacitor-community/admob';
+import { ADMOB_CONFIG } from './constants';
+import { Capacitor } from '@capacitor/core';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(() => {
@@ -102,6 +104,15 @@ const App: React.FC = () => {
 
   useEffect(() => {
     AdMob.initialize().catch(err => console.warn('AdMob init failed:', err));
+
+    // Pre-load interstitial ad
+    if (Capacitor.isNativePlatform()) {
+      const options: AdOptions = {
+        adId: ADMOB_CONFIG.interstitial_id,
+        isTesting: false
+      };
+      AdMob.prepareInterstitial(options).catch(err => console.warn('AdMob prepare failed:', err));
+    }
   }, []);
 
   // Visibility Hook Logic (Optimized Polling)
@@ -400,7 +411,22 @@ const App: React.FC = () => {
         onOpenAdmin={handleAdminAccess}
         backgroundUrl={headerBg}
         hasLive={!!streamUrl}
-        onOpenLive={() => setIsLiveOpen(true)}
+        onOpenLive={async () => {
+          if (Capacitor.isNativePlatform()) {
+            try {
+              await AdMob.showInterstitial();
+              // Re-prepare for next time
+              const options: AdOptions = {
+                adId: ADMOB_CONFIG.interstitial_id,
+                isTesting: false
+              };
+              AdMob.prepareInterstitial(options).catch(err => console.warn('AdMob re-prepare failed:', err));
+            } catch (err) {
+              console.warn('AdMob show failed or dismissed:', err);
+            }
+          }
+          setIsLiveOpen(true);
+        }}
       />
 
       {deferredPrompt && (
