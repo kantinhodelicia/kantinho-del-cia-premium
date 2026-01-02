@@ -39,13 +39,20 @@ const Header: React.FC<Props> = ({ user, onLogout, onOpenProfile, onOpenAdmin, o
         {hasLive && (
           <button
             onClick={onOpenLive}
-            className="mb-8 flex items-center gap-3 bg-red-600/20 backdrop-blur-md border border-red-500/30 px-5 py-2.5 rounded-2xl animate-bounce hover:scale-105 transition-all"
+            className="mb-8 flex items-center gap-3 bg-red-600/10 backdrop-blur-xl border border-red-500/30 px-6 py-3 rounded-[24px] hover:bg-red-600/20 transition-all group relative overflow-hidden shadow-2xl shadow-red-900/40"
           >
+            <div className="absolute inset-0 animate-shimmer opacity-20" />
             <div className="relative">
-              <Tv className="w-5 h-5 text-red-500" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+              <Tv className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
+              <div className="absolute -top-1 -right-1 flex">
+                <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-ping opacity-75 absolute"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+              </div>
             </div>
-            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Kantinho Live On</span>
+            <div className="flex flex-col items-start leading-none scale-95 group-hover:scale-100 transition-transform">
+              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em] mb-1">On Air Center</span>
+              <span className="text-xs font-black text-white uppercase tracking-widest">Kantinho Live On</span>
+            </div>
           </button>
         )}
 

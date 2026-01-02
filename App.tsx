@@ -66,6 +66,7 @@ const App: React.FC = () => {
   const [halfMode, setHalfMode] = useState<boolean>(false);
   const [halfSelection, setHalfSelection] = useState<{ left?: Product; right?: Product }>({});
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+  const [cartBounce, setCartBounce] = useState(false);
 
   // PWA Install State
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -237,6 +238,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem('kd_cart', JSON.stringify(cart));
+    if (cart.length > 0) {
+      setCartBounce(true);
+      const timer = setTimeout(() => setCartBounce(false), 800);
+      return () => clearTimeout(timer);
+    }
   }, [cart]);
 
   const showToast = useCallback((message: string, type: 'success' | 'info' | 'error' = 'info') => {
@@ -530,7 +536,7 @@ const App: React.FC = () => {
           <button onClick={() => setIsGameOpen(true)} className="p-3 text-slate-400 hover:text-white transition-colors">
             <Gamepad2 className="w-6 h-6" />
           </button>
-          <button onClick={() => setIsCartOpen(true)} className="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-red-900/30">
+          <button onClick={() => setIsCartOpen(true)} className={`flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-red-900/30 transition-all ${cartBounce ? 'animate-cart-bounce' : ''}`}>
             <ShoppingBag className="w-5 h-5" />
             <span className="font-bold uppercase tracking-tight">CARRINHO ({cart.length})</span>
           </button>

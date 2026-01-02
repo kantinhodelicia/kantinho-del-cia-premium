@@ -260,8 +260,19 @@ const MenuList: React.FC<Props> = ({ products, selectedSize, onSelect, halfMode,
 
                 {/* Hot Label for specific categories */}
                 {p.category === 'PIZZAS' && index < 2 && (
-                  <div className="absolute top-0 left-12 -translate-y-1/2 bg-orange-600 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1.5 z-20 shadow-orange-900/40 border border-white/20">
-                    <Flame className="w-3 h-3 fill-current" /> MAIS PEDIDA
+                  <div className="absolute top-0 left-12 -translate-y-1/2 bg-orange-600 text-white px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg flex items-center gap-1.5 z-20 shadow-orange-900/40 border border-white/20 animate-float overflow-hidden group/label">
+                    <div className="absolute inset-0 animate-shimmer opacity-30" />
+                    <Flame className="w-3 h-3 fill-current relative z-10" />
+                    <span className="relative z-10">MAIS PEDIDA</span>
+                  </div>
+                )}
+
+                {/* New Label for recent items */}
+                {p.category === 'BEBIDAS' && index === 0 && (
+                  <div className="absolute top-0 left-12 -translate-y-1/2 bg-blue-600 text-white px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg flex items-center gap-1.5 z-20 shadow-blue-900/40 border border-white/20 animate-float overflow-hidden group/label">
+                    <div className="absolute inset-0 animate-shimmer opacity-30" />
+                    <Sparkles className="w-3 h-3 fill-current relative z-10" />
+                    <span className="relative z-10">NOVIDADE</span>
                   </div>
                 )}
 

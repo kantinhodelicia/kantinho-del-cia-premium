@@ -1518,9 +1518,15 @@ const AdminPanel: React.FC<Props> = ({
 
                   {/* TECHNICAL ANALYTICS */}
                   <div className="bg-gray-900 border border-gray-800 p-8 rounded-[48px] space-y-6">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                      <Activity className="w-4 h-4" /> Telemetry Stream
-                    </h4>
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                        <Activity className="w-4 h-4" /> Telemetry Stream
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Signal Locked</span>
+                      </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
                         <p className="text-[8px] font-black text-gray-600 uppercase">Bitrate</p>

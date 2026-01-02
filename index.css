@@ -1,3 +1,102 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased text-slate-200 select-none;
+        background-color: #020617;
+    }
+}
+
+@layer utilities {
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-pulse-glow {
+        animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .animate-shimmer {
+        background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    .animate-cart-bounce {
+        animation: cart-bounce 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes pulse-glow {
+
+        0%,
+        100% {
+            opacity: 1;
+            filter: brightness(1);
+        }
+
+        50% {
+            opacity: 0.8;
+            filter: brightness(1.7);
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    @keyframes cart-bounce {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        15% {
+            transform: scale(1.2) rotate(-10deg);
+        }
+
+        30% {
+            transform: scale(0.9) rotate(8deg);
+        }
+
+        45% {
+            transform: scale(1.1) rotate(-4deg);
+        }
+
+        60% {
+            transform: scale(0.95);
+        }
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
