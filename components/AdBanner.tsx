@@ -13,7 +13,7 @@ const AdBanner: React.FC = () => {
                         adId: 'ca-app-pub-3940256099942544/6300978111', // Test Banner ID
                         adSize: BannerAdSize.ADAPTIVE_BANNER,
                         position: BannerAdPosition.BOTTOM_CENTER,
-                        margin: 0,
+                        margin: 90,
                         isTesting: true
                     });
                 } catch (err) {
