@@ -81,7 +81,7 @@ export const EXTRAS: Extra[] = [
 ];
 
 export const ADMOB_CONFIG = {
-  app_id: "ca-app-pub-9115437935848433~9289545502",
+  app_id: "ca-app-pub-9115437935848433~8159951148",
   banner_id: "ca-app-pub-9115437935848433/7909218446",
-  interstitial_id: "ca-app-pub-9115437935848433/7137679365"
+  interstitial_id: "ca-app-pub-9115437935848433/6846869474"
 };
